@@ -1,17 +1,18 @@
 /*!
- * DebugConsole.js
- * A docked, resizable debug panel for web development.
- * https://github.com/yourname/debug-console
+ * ConsoleLite
+ * A docked, resizable debug console for web development
+ * https://github.com/nrossetti/ConsoleLite
  */
 
 (function () {
   const STORAGE_KEYS = {
     MINIMIZED: "debugConsole:isMinimized",
-    HEIGHT: "debugConsole:height"
+    HEIGHT: "debugConsole:height",
+    CLOSED: "debugConsole:isClosed"
   };
 
   function initDebugPanel() {
-    if (document.getElementById("debugWrapper")) return;
+    if (document.getElementById("debugWrapper") || localStorage.getItem(STORAGE_KEYS.CLOSED) === "true") return;
 
     const isMinimized = localStorage.getItem(STORAGE_KEYS.MINIMIZED) === "true";
     const savedHeight = localStorage.getItem(STORAGE_KEYS.HEIGHT);
@@ -36,7 +37,6 @@
       boxShadow: "0 -2px 10px rgba(0,0,0,0.5)"
     });
 
-    // Resizer
     const resizer = document.createElement("div");
     Object.assign(resizer.style, {
       height: "5px",
@@ -64,7 +64,6 @@
       document.addEventListener("mouseup", onUp);
     };
 
-    // Header
     const handle = document.createElement("div");
     Object.assign(handle.style, {
       background: "#333",
@@ -112,8 +111,7 @@
 
     const clearBtn = iconBtn("🗑️", "Clear logs", () => (logArea.innerHTML = ""));
     const closeBtn = iconBtn("❌", "Close console", () => {
-      localStorage.removeItem(STORAGE_KEYS.MINIMIZED);
-      localStorage.removeItem(STORAGE_KEYS.HEIGHT);
+      localStorage.setItem(STORAGE_KEYS.CLOSED, "true");
       wrapper.remove();
     });
 
@@ -204,10 +202,28 @@
     log: data => logData(data, "info"),
     info: data => logData(data, "debug"),
     error: data => logData(data, "error")
- };
+  };
 
-  // Shorter developer-friendly aliases
   window.logData = DebugConsole.log;
   window.logInfo = DebugConsole.info;
   window.logError = DebugConsole.error;
+
+  window.showConsoleLite = () => {
+    localStorage.setItem("debugConsole:isClosed", "false");
+    setTimeout(() => DebugConsole.log("Console manually reopened"), 10);
+  };
+
+  // Toggle console with Ctrl + `
+  document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.key === "`") {
+      const el = document.getElementById("debugWrapper");
+      if (el) {
+        const isHidden = el.style.display === "none";
+        el.style.display = isHidden ? "flex" : "none";
+        localStorage.setItem("debugConsole:isClosed", !isHidden);
+      } else {
+        showConsoleLite();
+      }
+    }
+  });
 })();
