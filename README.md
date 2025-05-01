@@ -37,19 +37,33 @@ Download [`debug-console.js`](https://github.com/nrossetti/ConsoleLite/blob/main
 
 ## 📦 Usage
 
+Call from anywhere in your JS:
+
 ```js
 logData("Hello world");
 logInfo({ user: "nick", items: [1, 2, 3] });
 logError("Something went wrong");
 ```
 
-Or access full API:
+Or use the full API:
 
 ```js
 DebugConsole.log("info level log");
 DebugConsole.info({ debug: true });
 DebugConsole.error("fatal error");
 ```
+
+### 🧭 Controls
+
+- **📋 Copy** – Copy all logs to clipboard
+- **🗑️ Clear** – Clear all log entries
+- **🗕 Minimize** – Collapse the panel (remembers state)
+- **❌ Close** – Hides the console (use hotkey to reopen)
+
+### ⌨️ Hotkey
+
+Press **Ctrl + `** (backtick) to toggle the console open or closed.  
+If closed manually, this shortcut will bring it back.
 
 ---
 
